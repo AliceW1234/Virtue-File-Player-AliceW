@@ -14,7 +14,15 @@ public class Alice {
 	boolean loop;
 	boolean pause;
 	
+	/**
+	 * Loop the file that are playing
+	 * If no file is playing, the method will return 
+	 */
 	void loop() {
+		if(alice.getStatus() == Status.STOPPED) {
+			return;
+		}
+		
 		if(loop) {
 			alice.setCycleCount(1);
 		}else {
@@ -23,10 +31,25 @@ public class Alice {
 		loop = !loop;
 	}
 	
+	/**
+	* play the next file
+	* Although it is call "skip," 
+	* it should be better named as "play next"
+	*/
 	void skip() {
 		if(queue.size() >= 1) {
 			alice = new MediaPlayer(new Media(queue.removeFirst().toURI().toString()));
 			alice.play();
+			alice.setOnEndOfMedia(new Runnable() {
+				@Override
+				public void run() {
+					alice.stop();
+					if(!queue.isEmpty()) {
+						skip();
+					}
+				}
+				
+			});
 		}
 	}
 	
@@ -50,6 +73,9 @@ public class Alice {
 		 }else if(cur == Status.PLAYING){
 			 alice.pause();
 			 pause = true;
+		 }else if(cur == Status.STOPPED) {
+			 skip();
+			 pause = false;
 		 }
 	}
 	
