@@ -18,75 +18,112 @@ import java.io.*;
 import java.util.*;
 
 public class Main extends Application {
-	private static LinkedList<File> toPlay;
-	private static boolean ifLoop = false;
-	public static MediaPlayer mediaPlayer;
 	
 	@Override
 	public void start(Stage primaryStage) {
 		//setup the buttons and other elements
 		
-		Button fileButton = new Button("Open file");
-		Button play = new Button("Play");
+		Button add = new Button("Open file");
+		Button clear = new Button("Clear");
+		Button insert = new Button("Insert");
 		Button loop = new Button("Loop");
-		
+		Button play = new Button("Play/Pause");
+		Button skip = new Button("Skip");
 		
 		FileChooser fc = new FileChooser();
-		Label fileName = new Label("no files selected");
+		Alice alice = new Alice();
+		QueueInfo qi = new QueueInfo();
 		
+		Label nowPlay = new Label("no files selected");
+		Label nowLength = new Label("Length: 0:00");
+		Label nowLoop = new Label("Loop: off");
+		Label nowStatus = new Label("Statues: pause");
 		
-		toPlay = new LinkedList<File>();
 		//____________________________________________________________________________
 		//setup the events
 		
-		EventHandler<ActionEvent> getFile =
+		EventHandler<ActionEvent> addFile =
+		        new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e)
+	        { 
+				File file = fc.showOpenDialog(primaryStage);
+
+				if (file != null) {
+					alice.add(file);
+				}
+	        }
+		};
+		
+		EventHandler<ActionEvent> clearFile =
 		        new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 	        {
-	            File file = fc.showOpenDialog(primaryStage);
-
-	            if (file != null) {
-	            	toPlay.add(file);
-	                fileName.setText(file.getName());
-	            }
+				alice.clear();
 	        }
+		};
+		
+		EventHandler<ActionEvent> insertFile =
+		        new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e)
+	        {
+				File file = fc.showOpenDialog(primaryStage);
+
+				if (file != null) {
+					alice.insert(file);
+				}
+	        }
+		};
+		
+		EventHandler<ActionEvent> loopFile =
+				new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e)
+			{
+				alice.loop();
+			}
 		};
 		
 		EventHandler<ActionEvent> playFile =
 		        new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 	        {
-				//Media hit = new Media(toPlay.remove().toURI().toString());
-				Media hit = new Media("http://www.sovmusic.ru/sam/s12264.mp3");
-				mediaPlayer = new MediaPlayer(hit);
-				mediaPlayer.play();
+				alice.play();
 	        }
 		};
 		
-		EventHandler<ActionEvent> loopFile =
+		EventHandler<ActionEvent> skipFile =
 		        new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 	        {
-				if(ifLoop) {
-					mediaPlayer.setCycleCount(1);
-				}else {
-					mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-				}
-				ifLoop = !ifLoop;
+				alice.skip();
 	        }
 		};
+		
 		//____________________________________________________________________________
    		//Assign the events
-		fileButton.setOnAction(getFile);
-		play.setOnAction(playFile);
+		add.setOnAction(addFile);
+		clear.setOnAction(clearFile);
+		insert.setOnAction(insertFile);
 		loop.setOnAction(loopFile);
-		
+		play.setOnAction(playFile);
+		skip.setOnAction(skipFile);
+		//____________________________________________________________________________
 		//Stage
+		add.setPrefSize(190, 150);
+		clear.setPrefSize(190, 150);
+		insert.setPrefSize(190, 150);
+		loop.setPrefSize(190, 150);
+		play.setPrefSize(190, 150);
+		skip.setPrefSize(190, 150);
+		
+		
+		BorderPane mediaPane = new BorderPane();
+		mediaPane.setPrefSize(800, 800);
+		
 		BorderPane root = new BorderPane();
-		root.setPrefSize(840, 645);
-		root.setLeft(fileButton);
-		root.setCenter(loop);
-		root.setBottom(play);
+		root.setPrefSize(1200, 800);
+		
+		root.setLeft(mediaPane);
+		root.setRight(qi.mainPane);
 		
 		Scene scene = new Scene(root);
    		primaryStage.setScene(scene);
