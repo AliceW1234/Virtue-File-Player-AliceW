@@ -1,0 +1,63 @@
+package application;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
+
+import java.io.*;
+import java.util.*;
+
+public class Alice {
+	LinkedList<File> queue;
+	MediaPlayer alice;
+	
+	boolean loop;
+	boolean pause;
+	
+	void loop() {
+		if(loop) {
+			alice.setCycleCount(1);
+		}else {
+			alice.setCycleCount(MediaPlayer.INDEFINITE);
+		}
+		loop = !loop;
+	}
+	
+	void skip() {
+		if(queue.size() >= 1) {
+			alice = new MediaPlayer(new Media(queue.removeFirst().toURI().toString()));
+			alice.play();
+		}
+	}
+	
+	void clear() {
+		queue = new LinkedList<File>();
+	}
+	
+	void add(File f) {
+		queue.addLast(f);
+	}
+	
+	void insert(File f) {
+		queue.addFirst(f);
+	}
+	
+	void play() {
+		 Status cur = alice.getStatus();
+		 if(cur == Status.PAUSED) {
+			 alice.play();
+			 pause = false;
+		 }else if(cur == Status.PLAYING){
+			 alice.pause();
+			 pause = true;
+		 }
+	}
+	
+	public Alice() {
+		queue = new LinkedList<File>();
+		alice = new MediaPlayer(new Media("http://www.sovmusic.ru/sam/s12264.mp3"));
+		
+		loop = false;
+		pause = true;
+	}
+}
