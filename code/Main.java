@@ -82,7 +82,7 @@ public class Main extends Application {
 			public void handle(ActionEvent e)
 			{
 				alice.loop();
-				qi.update(alice.queue);
+				nowLoop.setText("Loop: " + (alice.loop ? "On" : "Off"));
 			}
 		};
 		
@@ -140,6 +140,7 @@ public class Main extends Application {
 		BorderPane mediaPane = new BorderPane();
 		mediaPane.setPrefSize(800, 800);
 		mediaPane.setBottom(buttonPane);
+		mediaPane.setTop(curInfo);
 		buttonPane.setPrefSize(570, 300);
 		//BorderPane.setAlignment(buttonPane, Pos.CENTER);
 		
