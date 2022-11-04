@@ -19,11 +19,11 @@ public class Alice {
 	 * If no file is playing, the method will return 
 	 */
 	void loop() {
-		if(alice.getStatus() == Status.STOPPED) {
-			return;
-		}
+//		if(alice.getStatus() == Status.STOPPED) {
+//			return;
+//		}
 		
-		if(loop) {
+		if(!loop) {
 			alice.setCycleCount(1);
 		}else {
 			alice.setCycleCount(MediaPlayer.INDEFINITE);
