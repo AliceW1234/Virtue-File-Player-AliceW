@@ -20,6 +20,8 @@ public class QueueInfo {
 		for(File f : list) {
 			vbox.getChildren().add(getLabel((cnt++) + ". " + f.getName()));
 		}
+		
+		mainPane.setContent(vbox);
 	}
 	
 	Label getLabel(String name) {
@@ -32,7 +34,7 @@ public class QueueInfo {
 		this.mainPane = new ScrollPane();
 		this.vbox = new VBox();
 		
-		vbox.setPrefSize(210, 645);
+		vbox.setPrefSize(400, 800);
 		mainPane.setContent(vbox);
 		mainPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 	}
