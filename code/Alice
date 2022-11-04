@@ -33,22 +33,40 @@ public class Alice {
 	
 	/**
 	* play the next file
-	* Although it is call "skip," 
-	* it should be better named as "play next"
 	*/
-	void skip() {
+	void playNext(QueueInfo qi) {
 		if(queue.size() >= 1) {
 			alice = new MediaPlayer(new Media(queue.removeFirst().toURI().toString()));
+			qi.update(queue);
 			alice.play();
 			alice.setOnEndOfMedia(new Runnable() {
 				@Override
 				public void run() {
 					alice.stop();
-					if(!queue.isEmpty()) {
-						skip();
-					}
+					playNext(qi);
 				}
-				
+			});
+		}else {
+			loop = false;
+		}
+	}
+	
+	void skip(QueueInfo qi) {
+		alice.stop();
+		if(!queue.isEmpty()) {
+			alice = new MediaPlayer(new Media(queue.removeFirst().toURI().toString()));
+			qi.update(queue);
+			alice.play();
+			if(loop) {
+				alice.setCycleCount(MediaPlayer.INDEFINITE);
+			}
+			alice.setOnEndOfMedia(new Runnable() {
+				@Override
+				public void run() {
+					alice.stop();
+					playNext(qi);
+				}
+						
 			});
 		}
 	}
@@ -65,7 +83,7 @@ public class Alice {
 		queue.addFirst(f);
 	}
 	
-	void play() {
+	void play(QueueInfo qi) {
 		 Status cur = alice.getStatus();
 		 if(cur == Status.PAUSED) {
 			 alice.play();
@@ -73,8 +91,8 @@ public class Alice {
 		 }else if(cur == Status.PLAYING){
 			 alice.pause();
 			 pause = true;
-		 }else if(cur == Status.STOPPED) {
-			 skip();
+		 }else if(!queue.isEmpty()) {
+			 playNext(qi);
 			 pause = false;
 		 }
 	}
