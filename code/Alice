@@ -3,6 +3,7 @@ package application;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.util.*;
@@ -10,6 +11,7 @@ import java.util.*;
 public class Alice {
 	LinkedList<File> queue;
 	MediaPlayer alice;
+	File cur;
 	
 	boolean loop;
 	boolean pause;
@@ -18,15 +20,28 @@ public class Alice {
 	 * Loop the file that are playing
 	 * If no file is playing, the method will return 
 	 */
-	void loop() {
-//		if(alice.getStatus() == Status.STOPPED) {
-//			return;
-//		}
+	void loop(QueueInfo qi) {
+		if(alice.getStatus() == Status.STOPPED) {
+			return;
+		}
 		
 		if(!loop) {
-			alice.setCycleCount(1);
+			//alice.setCycleCount(1);
+			alice.setOnEndOfMedia(new Runnable() {
+				@Override
+				public void run() {
+					alice.seek(Duration.ZERO);
+				}
+			});
 		}else {
-			alice.setCycleCount(MediaPlayer.INDEFINITE);
+			//alice.setCycleCount(MediaPlayer.INDEFINITE);
+			alice.setOnEndOfMedia(new Runnable() {
+				@Override
+				public void run() {
+					alice.stop();
+					playNext(qi);
+				}
+			});
 		}
 		loop = !loop;
 	}
@@ -36,7 +51,8 @@ public class Alice {
 	*/
 	void playNext(QueueInfo qi) {
 		if(queue.size() >= 1) {
-			alice = new MediaPlayer(new Media(queue.removeFirst().toURI().toString()));
+			cur = queue.removeFirst();
+			alice = new MediaPlayer(new Media(cur.toURI().toString()));
 			qi.update(queue);
 			alice.play();
 			alice.setOnEndOfMedia(new Runnable() {
@@ -49,12 +65,13 @@ public class Alice {
 		}else {
 			loop = false;
 		}
-	}
+	}	
 	
 	void skip(QueueInfo qi) {
 		alice.stop();
 		if(!queue.isEmpty()) {
-			alice = new MediaPlayer(new Media(queue.removeFirst().toURI().toString()));
+			cur = queue.removeFirst();
+			alice = new MediaPlayer(new Media(cur.toURI().toString()));
 			qi.update(queue);
 			alice.play();
 			if(loop) {
@@ -100,6 +117,7 @@ public class Alice {
 	public Alice() {
 		queue = new LinkedList<File>();
 		alice = new MediaPlayer(new Media("http://www.sovmusic.ru/sam/s12264.mp3"));
+		
 		
 		loop = false;
 		pause = true;
