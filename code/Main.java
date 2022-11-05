@@ -8,8 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -81,7 +79,7 @@ public class Main extends Application {
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 			{
-				alice.loop();
+				alice.loop(qi);
 				nowLoop.setText("Loop: " + (alice.loop ? "On" : "Off"));
 			}
 		};
@@ -90,7 +88,7 @@ public class Main extends Application {
 		        new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 	        {
-				alice.play(qi);
+				alice.play(qi);	
 	        }
 		};
 		
