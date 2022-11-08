@@ -26,7 +26,6 @@ public class Alice {
 		}
 		
 		if(!loop) {
-			//alice.setCycleCount(1);
 			alice.setOnEndOfMedia(new Runnable() {
 				@Override
 				public void run() {
@@ -34,7 +33,6 @@ public class Alice {
 				}
 			});
 		}else {
-			//alice.setCycleCount(MediaPlayer.INDEFINITE);
 			alice.setOnEndOfMedia(new Runnable() {
 				@Override
 				public void run() {
@@ -75,16 +73,22 @@ public class Alice {
 			qi.update(queue);
 			alice.play();
 			if(loop) {
-				alice.setCycleCount(MediaPlayer.INDEFINITE);
+				alice.setOnEndOfMedia(new Runnable() {
+					@Override
+					public void run() {
+						alice.seek(Duration.ZERO);
+					}
+				});
+			}else {
+				alice.setOnEndOfMedia(new Runnable() {
+					@Override
+					public void run() {
+						alice.stop();
+						playNext(qi);
+					}
+							
+				});
 			}
-			alice.setOnEndOfMedia(new Runnable() {
-				@Override
-				public void run() {
-					alice.stop();
-					playNext(qi);
-				}
-						
-			});
 		}
 	}
 	
