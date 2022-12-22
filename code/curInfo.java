@@ -38,10 +38,10 @@ public class CurInfo {
 		this.loop = new Label("Loop: off");
 		this.status = new Label("Statues: paused");
 		
-		this.name.setFont(Font.font("Cambria", 32));
-		this.length.setFont(Font.font("Cambria", 32));
-		this.loop.setFont(Font.font("Cambria", 32));
-		this.status.setFont(Font.font("Cambria", 32));
+		this.name.setFont(Font.font("Cambria", 26));
+		this.length.setFont(Font.font("Cambria", 26));
+		this.loop.setFont(Font.font("Cambria", 26));
+		this.status.setFont(Font.font("Cambria", 26));
 		
 		mainPane = new VBox();
 		mainPane.setPrefSize(100, 100);
