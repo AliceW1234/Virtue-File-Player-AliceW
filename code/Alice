@@ -9,6 +9,9 @@ import java.io.*;
 import java.util.*;
 
 public class Alice {
+	QueueInfo qi;
+	CurInfo ci;
+	
 	LinkedList<File> queue;
 	MediaPlayer alice;
 	File cur;
@@ -20,7 +23,7 @@ public class Alice {
 	 * Loop the file that are playing
 	 * If no file is playing, the method will return 
 	 */
-	void loop(QueueInfo qi) {
+	void loop() {
 		if(alice.getStatus() == Status.STOPPED) {
 			return;
 		}
@@ -37,19 +40,21 @@ public class Alice {
 				@Override
 				public void run() {
 					alice.stop();
-					playNext(qi);
+					playNext();
 				}
 			});
 		}
 		loop = !loop;
+		ci.loop(loop);
 	}
 	
 	/**
 	* play the next file
 	*/
-	void playNext(QueueInfo qi) {
+	void playNext() {
 		if(queue.size() >= 1) {
 			cur = queue.removeFirst();
+			ci.updateNewFile(cur);
 			alice = new MediaPlayer(new Media(cur.toURI().toString()));
 			qi.update(queue);
 			alice.play();
@@ -57,7 +62,7 @@ public class Alice {
 				@Override
 				public void run() {
 					alice.stop();
-					playNext(qi);
+					playNext();
 				}
 			});
 		}else {
@@ -65,7 +70,7 @@ public class Alice {
 		}
 	}	
 	
-	void skip(QueueInfo qi) {
+	void skip() {
 		alice.stop();
 		if(!queue.isEmpty()) {
 			cur = queue.removeFirst();
@@ -84,37 +89,46 @@ public class Alice {
 					@Override
 					public void run() {
 						alice.stop();
-						playNext(qi);
+						playNext();
 					}
 							
 				});
 			}
+		}else {
+			ci.clear();
+			pause = true;
 		}
 	}
 	
 	void clear() {
 		queue = new LinkedList<File>();
+		qi.update(queue);
 	}
 	
 	void add(File f) {
 		queue.addLast(f);
+		qi.update(queue);
 	}
 	
 	void insert(File f) {
 		queue.addFirst(f);
+		qi.update(queue);
 	}
 	
-	void play(QueueInfo qi) {
+	void play() {
 		 Status cur = alice.getStatus();
 		 if(cur == Status.PAUSED) {
 			 alice.play();
 			 pause = false;
+			 ci.updateNewStatus(pause);
 		 }else if(cur == Status.PLAYING){
 			 alice.pause();
 			 pause = true;
+			 ci.updateNewStatus(pause);
 		 }else if(!queue.isEmpty()) {
-			 playNext(qi);
 			 pause = false;
+			 ci.updateNewStatus(pause);
+			 playNext();
 		 }
 	}
 	
@@ -125,5 +139,8 @@ public class Alice {
 		
 		loop = false;
 		pause = true;
+		
+		this.qi = new QueueInfo();
+		this.ci = new CurInfo();
 	}
 }
