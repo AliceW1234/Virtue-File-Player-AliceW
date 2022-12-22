@@ -14,7 +14,6 @@ public class QueueInfo {
 	
 	void update(LinkedList<File> list) {
 		vbox = new VBox(); 
-		vbox.setPrefSize(210, 645);
 		
 		int cnt = 1;
 		for(File f : list) {
@@ -26,7 +25,7 @@ public class QueueInfo {
 	
 	Label getLabel(String name) {
 		Label l = new Label(name);
-		l.setPrefSize(210, 100);
+		l.setPrefSize(400, 40);
 		return l;
 	}
 	
@@ -34,7 +33,7 @@ public class QueueInfo {
 		this.mainPane = new ScrollPane();
 		this.vbox = new VBox();
 		
-		vbox.setPrefSize(400, 800);
+		mainPane.setPrefSize(400, 800);
 		mainPane.setContent(vbox);
 		mainPane.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 	}
