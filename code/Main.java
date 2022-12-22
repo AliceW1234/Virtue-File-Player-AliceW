@@ -30,13 +30,6 @@ public class Main extends Application {
 		
 		FileChooser fc = new FileChooser();
 		Alice alice = new Alice();
-		QueueInfo qi = new QueueInfo();
-		
-		Label nowPlay = new Label("no files selected");
-		Label nowLength = new Label("Length: 0:00");
-		Label nowLoop = new Label("Loop: off");
-		Label nowStatus = new Label("Statues: pause");
-		
 		//____________________________________________________________________________
 		//setup the events
 		
@@ -49,7 +42,6 @@ public class Main extends Application {
 				if (file != null) {
 					alice.add(file);
 				}
-				qi.update(alice.queue);
 	        }
 		};
 		
@@ -58,7 +50,6 @@ public class Main extends Application {
 			public void handle(ActionEvent e)
 	        {
 				alice.clear();
-				qi.update(alice.queue);
 	        }
 		};
 		
@@ -71,7 +62,6 @@ public class Main extends Application {
 				if (file != null) {
 					alice.insert(file);
 				}
-				qi.update(alice.queue);
 	        }
 		};
 		
@@ -79,8 +69,8 @@ public class Main extends Application {
 				new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 			{
-				alice.loop(qi);
-				nowLoop.setText("Loop: " + (alice.loop ? "On" : "Off"));
+				alice.loop();
+				//nowLoop.setText("Loop: " + (alice.loop ? "On" : "Off"));
 			}
 		};
 		
@@ -88,7 +78,7 @@ public class Main extends Application {
 		        new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 	        {
-				alice.play(qi);	
+				alice.play();	
 	        }
 		};
 		
@@ -96,7 +86,7 @@ public class Main extends Application {
 		        new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e)
 	        {
-				alice.skip(qi);
+				alice.skip();
 	        }
 		};
 		
@@ -131,22 +121,25 @@ public class Main extends Application {
 		buttonPane.setLeft(column1);
 		buttonPane.setCenter(column2);
 		buttonPane.setRight(column3);
+		//buttonPane.setPrefSize(570, 300);
+		buttonPane.setMinSize(570, 300);
+		buttonPane.setMaxSize(570, 300);
 		
-		VBox curInfo = new VBox();
-		curInfo.getChildren().addAll(nowPlay, nowLength, nowLoop, nowStatus);
+//		VBox curInfo = new VBox();
+//		curInfo.getChildren().addAll(nowPlay, nowLength, nowLoop, nowStatus);
 		
 		BorderPane mediaPane = new BorderPane();
 		mediaPane.setPrefSize(800, 800);
 		mediaPane.setBottom(buttonPane);
-		mediaPane.setTop(curInfo);
-		buttonPane.setPrefSize(570, 300);
-		//BorderPane.setAlignment(buttonPane, Pos.CENTER);
+		alice.ci.mainPane.setAlignment(Pos.CENTER);
+		mediaPane.setTop(alice.ci.mainPane);
+		mediaPane.setAlignment(buttonPane, Pos.CENTER);
 		
 		BorderPane root = new BorderPane();
 		root.setPrefSize(1200, 800);
 		
 		root.setLeft(mediaPane);
-		root.setRight(qi.mainPane);
+		root.setRight(alice.qi.mainPane);
 		
 		Scene scene = new Scene(root);
    		primaryStage.setScene(scene);
